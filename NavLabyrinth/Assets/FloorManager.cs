@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FloorManager : MonoBehaviour {
+internal class FloorManager : MonoBehaviour {
 	private List<Floor> floors = new List<Floor>();
 
 	private static FloorManager _instance = null;

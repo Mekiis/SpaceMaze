@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Player : MonoBehaviour {
+internal class Player : MonoBehaviour {
 
 	public Floor origin = null;
 	public Floor destFloor = null;

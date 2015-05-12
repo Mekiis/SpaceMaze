@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-public class Floor : MonoBehaviour {
-	public List<Floor> connection = new List<Floor>();
+internal class Floor : AStarWrapperTile 
+{
+	public Floor(ATile a_tile) : base(a_tile) { }
 
 	// Use this for initialization
 	void Start () {
