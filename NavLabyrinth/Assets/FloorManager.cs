@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 internal class FloorManager : MonoBehaviour {
-	private List<Floor> floors = new List<Floor>();
+	private static List<ATile> floors = new List<ATile>();
 
 	private static FloorManager _instance = null;
 	internal static FloorManager Instance
@@ -17,19 +17,15 @@ internal class FloorManager : MonoBehaviour {
 		}
 	}
 
-	internal void RegisterFloor(Floor a_floor)
+	internal void RegisterFloor(ATile a_floor)
 	{
 		floors.Add (a_floor);
 	}
 
-	internal List<Floor> GetPath(Floor a_origin, Floor a_dest)
+	internal List<ATile> GetPath(Floor a_origin, Floor a_dest)
 	{
-		List<Floor> path = new List<Floor> ();
-
-		// Todo Compute A* algorithm
-		path.Add (a_origin);
-		path.Add (a_dest);
-
-		return path;
+		AStarPathFinder pathFinder = new AStarPathFinder ();
+		pathFinder.tiles = floors;
+		return pathFinder.GetPath(a_origin, a_dest);
 	}
 }

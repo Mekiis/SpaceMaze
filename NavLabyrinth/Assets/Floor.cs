@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-internal class Floor : AStarWrapperTile 
+internal class Floor : ATile 
 {
-	public Floor(ATile a_tile) : base(a_tile) { }
-
 	// Use this for initialization
 	void Start () {
 		FloorManager.Instance.RegisterFloor (this);
 	}
-
+	
 	void OnDrawGizmosSelected() {
 		Gizmos.color = Color.magenta;
 		foreach (Floor f in connection) 

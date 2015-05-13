@@ -5,12 +5,12 @@ using System.Collections.Generic;
 internal class AStarPathFinder : APathFinder {
 	// Source : http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
 
-	public override List<ATile> GetPath (ATile fromTile, ATile toTile)
+	public override List<ATile> GetPath (ATile a_fromTile, ATile a_toTile)
 	{
 		List<ATile> path = new List<ATile>();
 
 		// Initialize array
-		List<AStarWrapperTile> allTiles = new List<AStarWrapperTile>();
+		List<AStarWrapperTile> allWrappedTiles = new List<AStarWrapperTile>();
 		List<AStarWrapperTile> open = new List<AStarWrapperTile>();
 		List<AStarWrapperTile> close = new List<AStarWrapperTile>();
 
@@ -18,21 +18,36 @@ internal class AStarPathFinder : APathFinder {
 		AStarWrapperTile destination = null;
 		foreach(ATile tile in tiles)
 		{
-			AStarWrapperTile starTile = new AStarWrapperTile(tile);
-			if(tile == fromTile)
-				open.Add(starTile);
-			else
-				allTiles.Add(starTile);
+			AStarWrapperTile wrappedTile = new AStarWrapperTile(tile);
+			Debug.Log ("Wrapping : "+wrappedTile);
+			allWrappedTiles.Add(wrappedTile);
 
-			if(tile == toTile)
-				destination = starTile;
+			if(tile.Equals(a_fromTile))
+			{
+				open.Add(wrappedTile);
+				wrappedTile.cost = 0f;
+			}
+				
+
+			if(tile.Equals(a_toTile))
+				destination = wrappedTile;
+		}
+
+		// Build Neightboor
+		foreach(AStarWrapperTile wrappedTile in allWrappedTiles)
+		{
+			foreach(ATile tileNeightboor in wrappedTile.tile.connection)
+			{
+				wrappedTile.neightboors.Add(GetWrapperFromTile(allWrappedTiles, tileNeightboor));
+			}
 		}
 
 		// Compute Algorithm
-		AStarWrapperTile previousTile = open[0];
 		AStarWrapperTile bestNode = null;
-		float lowestCost = -1;
+
 		do{
+			float lowestCost = -1;
+			// find the node with the least f on the open list, call it "q"
 			foreach( AStarWrapperTile tile in open)
 			{
 				if( lowestCost == -1 || tile.cost < lowestCost )
@@ -42,39 +57,50 @@ internal class AStarPathFinder : APathFinder {
 				}
 			}
 
-			if(bestNode != destination)
-			{
-				open.Remove(bestNode);
-				close.Add(bestNode);
-			}
+			// pop q off the open list
+			open.Remove(bestNode);
+			// push q on the closed list
+			close.Add(bestNode);
 
-			foreach( AStarWrapperTile neightboor in bestNode.connection )
+			foreach( AStarWrapperTile neightboor in bestNode.neightboors )
 			{
-				float cost = previousTile.cost + bestNode.getCostTo(neightboor);
+				float cost = bestNode.cost + bestNode.getCostTo(neightboor) + neightboor.getHeuristicTo(destination);
 
-				if(open.Contains(neightboor) && cost < neightboor.cost)
+				if(cost < neightboor.total)
 				{
-					open.Remove(neightboor);
-				}
-				else if(close.Contains(neightboor) && cost < neightboor.cost)
-				{
-					close.Remove(neightboor);
-				}
-				else if(!open.Contains(neightboor) && !close.Contains(neightboor))
-				{
-					/*
-					set g(neighbor) to cost
-						add neighbor to OPEN
-							set priority queue rank to g(neighbor) + h(neighbor)
-							set neighbor's parent to current
-							*/
+					if(open.Contains(neightboor)) 
+					   	open.Remove(neightboor);
+					else if(close.Contains(neightboor))
+					    close.Remove(neightboor);
+					else
+					{
+						neightboor.cost = cost;
+						neightboor.parent = bestNode;
+						open.Add(neightboor);
+					}
 				}
 			}
 
-		} while(bestNode != destination);
+		} while(open.Count != 0);
 
 		// Construct final path
+		AStarWrapperTile cursor = destination;
+		while(cursor != null && cursor.tile != a_fromTile)
+		{
+			path.Add(cursor.tile);
+			cursor = cursor.parent;
+		}
 
 		return path;
+	}
+
+	private AStarWrapperTile GetWrapperFromTile(List<AStarWrapperTile> a_allTiles, ATile a_tile)
+	{
+		foreach(AStarWrapperTile tile in a_allTiles)
+		{
+			if(tile.tile.Equals(a_tile)) return tile;
+		}
+
+		return null;
 	}
 }

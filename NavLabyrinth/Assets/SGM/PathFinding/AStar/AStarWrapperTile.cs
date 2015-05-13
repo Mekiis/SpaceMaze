@@ -1,11 +1,16 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-internal class AStarWrapperTile : ATile
+internal class AStarWrapperTile
 {
 	internal ATile tile = null;
-	internal ATile parent = null;
-	internal float cost = 0f;
+	internal List<AStarWrapperTile> neightboors = new List<AStarWrapperTile>();
+	internal AStarWrapperTile parent = null;
+
+	internal float cost = float.MaxValue;
+	internal float heuristic = float.MaxValue;
+	internal float total = float.MaxValue;
 
 	public AStarWrapperTile(ATile a_tile)
 	{
@@ -14,7 +19,12 @@ internal class AStarWrapperTile : ATile
 
 	internal float getCostTo(AStarWrapperTile tile)
 	{
-		return 0f;
+		return 1f;
+	}
+
+	internal float getHeuristicTo(AStarWrapperTile tile)
+	{
+		return 1f;
 	}
 }
 

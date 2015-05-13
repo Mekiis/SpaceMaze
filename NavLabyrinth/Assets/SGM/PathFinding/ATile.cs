@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-internal abstract class ATile : MonoBehaviour 
+internal abstract class ATile : MonoBehaviour
 {
 	#region Inspector Properties
 	public float weight 				= 1f;

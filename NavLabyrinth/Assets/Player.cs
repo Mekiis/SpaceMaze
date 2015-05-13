@@ -13,13 +13,13 @@ internal class Player : MonoBehaviour {
 
 	public bool canMove = true;
 
-	private List<Floor> path = null;
+	private List<ATile> path = null;
 	private Vector3 dest;
 
 	// Use this for initialization
 	void Start () 
 	{
-		this.transform.position = new Vector3 (origin.transform.position.x, this.transform.position.y, origin.transform.position.z);
+		//this.transform.position = new Vector3 (origin..transform.position.x, this.transform.position.y, origin.transform.position.z);
 		GetPath (origin, destFloor);
 	}
 	
@@ -41,11 +41,12 @@ internal class Player : MonoBehaviour {
 	void GetPath(Floor a_origin, Floor a_dest)
 	{
 		path = FloorManager.Instance.GetPath (a_origin, a_dest);
+		/*
 		if (path.Count > 0)
 			dest = path [1].transform.position;
 		else
 			dest = this.transform.position;
 
-		canMove = true;
+		canMove = true;*/
 	}
 }
