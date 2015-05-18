@@ -5,16 +5,15 @@ using System.Collections.Generic;
 internal class FloorManager : MonoBehaviour {
 	private static List<ATile> floors = new List<ATile>();
 
-	private static FloorManager _instance = null;
-	internal static FloorManager Instance
+	internal static FloorManager Instance;
+	void Awake()
 	{
-		get
-		{
-			if(_instance == null)
-				_instance = new FloorManager();
-
-			return _instance;
-		}
+		if(Instance != null)
+			GameObject.Destroy(Instance);
+		else
+			Instance = this;
+		
+		DontDestroyOnLoad(this);
 	}
 
 	internal void RegisterFloor(ATile a_floor)
@@ -22,7 +21,7 @@ internal class FloorManager : MonoBehaviour {
 		floors.Add (a_floor);
 	}
 
-	internal List<ATile> GetPath(Floor a_origin, Floor a_dest)
+	internal List<ATile> GetPath(ATile a_origin, ATile a_dest)
 	{
 		AStarPathFinder pathFinder = new AStarPathFinder ();
 		pathFinder.tiles = floors;

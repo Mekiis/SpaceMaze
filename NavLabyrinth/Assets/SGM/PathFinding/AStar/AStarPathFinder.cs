@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,78 +19,77 @@ internal class AStarPathFinder : APathFinder {
 		foreach(ATile tile in tiles)
 		{
 			AStarWrapperTile wrappedTile = new AStarWrapperTile(tile);
-			Debug.Log ("Wrapping : "+wrappedTile);
 			allWrappedTiles.Add(wrappedTile);
 
 			if(tile.Equals(a_fromTile))
-			{
-				open.Add(wrappedTile);
-				wrappedTile.cost = 0f;
-			}
-				
+				open.Add(wrappedTile);				
 
 			if(tile.Equals(a_toTile))
 				destination = wrappedTile;
 		}
 
-		// Build Neightboor
-		foreach(AStarWrapperTile wrappedTile in allWrappedTiles)
-		{
-			foreach(ATile tileNeightboor in wrappedTile.tile.connection)
-			{
-				wrappedTile.neightboors.Add(GetWrapperFromTile(allWrappedTiles, tileNeightboor));
-			}
-		}
-
 		// Compute Algorithm
-		AStarWrapperTile bestNode = null;
+		AStarWrapperTile currentNode = null;
 
-		do{
-			float lowestCost = -1;
+		while(open.Count > 0){
+			float lowF = -1;
 			// find the node with the least f on the open list, call it "q"
 			foreach( AStarWrapperTile tile in open)
 			{
-				if( lowestCost == -1 || tile.cost < lowestCost )
+				if( lowF == -1 || tile.f < lowF )
 				{
-					lowestCost = tile.cost;
-					bestNode = tile;
+					lowF = tile.f;
+					currentNode = tile;
 				}
 			}
 
+			if(currentNode == destination)
+				break;
+
 			// pop q off the open list
-			open.Remove(bestNode);
+			open.Remove(currentNode);
 			// push q on the closed list
-			close.Add(bestNode);
+			close.Add(currentNode);
 
-			foreach( AStarWrapperTile neightboor in bestNode.neightboors )
+			List<Link> connections = currentNode.tile.GetConnections();
+			for(int i = 0; i < connections.Count; i++)
 			{
-				float cost = bestNode.cost + bestNode.getCostTo(neightboor) + neightboor.getHeuristicTo(destination);
-
-				if(cost < neightboor.total)
+				Link link = connections[i];
+				AStarWrapperTile wrappedTileNeighboor = GetWrapperFromTile(allWrappedTiles, link.Tile);
+				if(wrappedTileNeighboor != null && !wrappedTileNeighboor.tile.isBlocked && !close.Contains(wrappedTileNeighboor))
 				{
-					if(open.Contains(neightboor)) 
-					   	open.Remove(neightboor);
-					else if(close.Contains(neightboor))
-					    close.Remove(neightboor);
-					else
+					float gScore = currentNode.g + currentNode.getCostTo(wrappedTileNeighboor);
+					
+					if(!open.Contains(wrappedTileNeighboor))
 					{
-						neightboor.cost = cost;
-						neightboor.parent = bestNode;
-						open.Add(neightboor);
+						wrappedTileNeighboor.h = wrappedTileNeighboor.getHeuristicTo(destination);
+						open.Add(wrappedTileNeighboor);
+						wrappedTileNeighboor.parent = currentNode;
+						wrappedTileNeighboor.g = gScore;
+						wrappedTileNeighboor.f = wrappedTileNeighboor.g + wrappedTileNeighboor.h;
+						Debug.Log("Path : "+currentNode.tile.name+"F : "+wrappedTileNeighboor.f+" / G : "+wrappedTileNeighboor.g+" / H : "+wrappedTileNeighboor.h);
+					}
+					else if(gScore < wrappedTileNeighboor.g)
+					{
+						wrappedTileNeighboor.parent = currentNode;
+						wrappedTileNeighboor.g = gScore;
+						wrappedTileNeighboor.f = wrappedTileNeighboor.g + wrappedTileNeighboor.h;
+						Debug.Log("Path : "+currentNode.tile.name+"F : "+wrappedTileNeighboor.f+" / G : "+wrappedTileNeighboor.g+" / H : "+wrappedTileNeighboor.h);
 					}
 				}
 			}
-
-		} while(open.Count != 0);
+		} 
 
 		// Construct final path
 		AStarWrapperTile cursor = destination;
-		while(cursor != null && cursor.tile != a_fromTile)
+		while(cursor != null)
 		{
+			Debug.Log("Path : "+cursor.tile.name);
 			path.Add(cursor.tile);
 			cursor = cursor.parent;
 		}
 
+		path.Reverse();
 		return path;
 	}
 
