@@ -7,12 +7,13 @@ internal class Floor : ATile
 	public List<Link> connection 		= new List<Link>();
 
 	internal Tower tower = null;
+	internal GameObject towerObject = null;
 	
-	private bool IsOccuped
+	protected virtual bool IsBuildable
 	{
 		get
 		{
-			return (this.isBlocked || tower != null);
+			return (!this.isBlocked);
 		}
 	}
 
@@ -99,7 +100,7 @@ internal class Floor : ATile
 
 	public virtual void OnSelected()
 	{
-		if(!isBlocked)
+		if(IsBuildable)
 			GetComponent<Renderer>().material = MatSelected;
 		else
 			GetComponent<Renderer>().material = MatBlocked;
@@ -112,10 +113,17 @@ internal class Floor : ATile
 
 	public virtual void OnClick()
 	{
-		if(!isBlocked)
+		if(IsBuildable)
 		{
 			List<Tower> towersAvaible = _gm.towerManager.GetEvolutionOfTower(tower);
 			Debug.Log("Tower avaible for this tile : "+towersAvaible.Count);
+			if(towersAvaible.Count > 0)
+			{
+				if(towerObject != null)
+					DestroyImmediate(towerObject);
+				tower = towersAvaible[0];
+				towerObject = Instantiate(tower.gameObject, this.transform.position, this.transform.rotation) as GameObject;
+			}
 		}
 	}
 }

@@ -195,6 +195,11 @@ internal class Unit : MonoBehaviour
 		return res;
 	}
 
+	internal float GetDistanceToDestination()
+	{
+		return 0f;
+	}
+
 	internal void OnTeleport(ATile a_destinationToGo)
 	{
 		transform.position = a_destinationToGo.transform.position;

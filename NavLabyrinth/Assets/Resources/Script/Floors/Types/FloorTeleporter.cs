@@ -6,6 +6,14 @@ internal class FloorTeleporter : Floor
 {
 	public Link destination = new Link();
 
+	protected override bool IsBuildable
+	{
+		get
+		{
+			return false;
+		}
+	}
+
 	public override List<Link> GetConnections ()
 	{
 		List<Link> connections = new List<Link>();
