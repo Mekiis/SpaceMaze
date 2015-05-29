@@ -9,6 +9,8 @@ internal class SGMGameManager : MonoBehaviour
 
 	#region Internal Properties
 	internal SGMTimeManager timeManager = null;
+	internal SGMUserManager userManager = null;
+	internal SGMUnlockManager unlockManager = null;
 	#endregion
 	
 	#region Instance
@@ -24,6 +26,8 @@ internal class SGMGameManager : MonoBehaviour
 		DontDestroyOnLoad(this);
 
 		timeManager = new SGMTimeManager();
+		userManager = new SGMUserManager();
+		unlockManager = new SGMUnlockManager();
 	}
 	#endregion
 }
