@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <Players>
+    <Player>
+      <id>test</id>
+      <stats>
+        <test2>25</test2>
+      </stats>
+    </Player>
+  </Players>
+</root>

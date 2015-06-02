@@ -11,6 +11,7 @@ internal class SGMGameManager : MonoBehaviour
 	internal SGMTimeManager timeManager = null;
 	internal SGMUserManager userManager = null;
 	internal SGMUnlockManager unlockManager = null;
+	internal SGMStatsManager statsManager = null;
 	#endregion
 	
 	#region Instance
@@ -28,6 +29,14 @@ internal class SGMGameManager : MonoBehaviour
 		timeManager = new SGMTimeManager();
 		userManager = new SGMUserManager();
 		unlockManager = new SGMUnlockManager();
+		statsManager = new SGMStatsManager();
+
+		SGMUser user = userManager.GetUserById("test");
+		if(user == null)
+			user = new SGMUser("test");
+
+		user.Load();
+		statsManager.SetValueForStat(user.id, "test2", 25f, true, true);
 	}
 	#endregion
 }
