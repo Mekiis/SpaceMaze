@@ -13,6 +13,7 @@ internal class Tower : MonoBehaviour {
 	[Tooltip("Dammage deal")]
 	public float dammage = 1f;
 	public List<Tower> parents = new List<Tower>();
+	public Missile missile = null;
 	#endregion
 
 	internal List<Unit> targets = new List<Unit>();
@@ -69,7 +70,11 @@ internal class Tower : MonoBehaviour {
 
 		if(_target != null)
 		{
+			Missile missileInstantiate = Instantiate(missile, Vector3.zero, Quaternion.identity) as Missile;
+			missileInstantiate.gameObject.SetActive(true);
 			// TODO : Instantiate bullet on target !
+			missileInstantiate.StartMissile(transform.position, new Vector3(0, 0, 0));
+
 			_timeBeforeNextShot = 1f/speed;
 		}
 	}

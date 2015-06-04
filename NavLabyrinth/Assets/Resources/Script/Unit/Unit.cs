@@ -29,52 +29,55 @@ internal class Unit : MonoBehaviour
 		set
 		{
 			_pathData = value;
-			state = EUnitState.Stop;
+			_state = EUnitState.Stop;
 		}
 	}
-	private List<ATile> pathToFollow = new List<ATile>();
+	private List<ATile> _pathToFollow = new List<ATile>();
 
-	private int currentTileId = -1;
-	private ATile nextTile = null;
-	private GameObject currentGameObject = null;
-	private ATile currentTile = null;
+	private int _currentTileId = -1;
+	private ATile _nextTile = null;
+	private GameObject _currentGameObject = null;
+	private ATile _currentTile = null;
 
-	private EUnitState state = EUnitState.Stop;
+	private EUnitState _state = EUnitState.Stop;
+
+	private float _currentLifePoint = 0f;
 	#endregion
 
 	void Awake()
 	{
-		state = EUnitState.Stop;
+		_state = EUnitState.Stop;
+		_currentLifePoint = lifePoint;
 	}
 
 	internal void Interuptor(bool a_state)
 	{
 		if(!a_state)
-			state = EUnitState.Stop;
+			_state = EUnitState.Stop;
 		if(a_state)
-			state = EUnitState.SearchPath;
+			_state = EUnitState.SearchPath;
 	}
 
 	void Update () 
 	{
-		switch (state)
+		switch (_state)
 		{
 		case EUnitState.Stop:
 			break;
 		case EUnitState.Move:
 			MajActualFloor();
-			currentTileId = MajCurrentTileId(currentTileId, currentTile);
-			nextTile = GetNexTile(currentTileId);
-			if(nextTile != null)
-				MoveToTile(nextTile);
+			_currentTileId = MajCurrentTileId(_currentTileId, _currentTile);
+			_nextTile = GetNexTile(_currentTileId);
+			if(_nextTile != null)
+				MoveToTile(_nextTile);
 			break;
 		case EUnitState.SearchPath:
 			MajActualFloor();
-			if(PathData != null && currentTile != null)
+			if(PathData != null && _currentTile != null)
 			{
-				pathToFollow = FloorManager.Instance.GetPath(currentTile, PathData.destinationTile);
-				SetOnTopOfObject(currentTile.transform);
-				state = EUnitState.Move;
+				_pathToFollow = FloorManager.Instance.GetPath(_currentTile, PathData.destinationTile);
+				SetOnTopOfObject(_currentTile.transform);
+				_state = EUnitState.Move;
 			}
 			else
 				Debug.Log ("No path data or currentTile for this Unit : "+this.name);
@@ -92,12 +95,12 @@ internal class Unit : MonoBehaviour
 		if (Physics.Raycast(transform.position, transform.TransformDirection (Vector3.down), out hit, Mathf.Infinity, layerMask)) 
 		{
 			//SetOnTopOfObject(hit.collider.gameObject.transform);
-			if(currentGameObject != hit.collider.gameObject)
+			if(_currentGameObject != hit.collider.gameObject)
 			{
-				currentGameObject = hit.collider.gameObject;
+				_currentGameObject = hit.collider.gameObject;
 				ATile tile = hit.collider.gameObject.GetComponent<ATile>();
-				if(tile && tile != currentTile)
-					currentTile = tile;
+				if(tile && tile != _currentTile)
+					_currentTile = tile;
 				Debug.DrawRay(transform.position, transform.TransformDirection (Vector3.down) * hit.distance, Color.yellow);
 			}
 		} 
@@ -130,12 +133,12 @@ internal class Unit : MonoBehaviour
 	{
 		int currentTileId = -1;
 
-		if(a_currentTileId == -1 || !a_currentTile.Equals(pathToFollow[a_currentTileId]))
+		if(a_currentTileId == -1 || !a_currentTile.Equals(_pathToFollow[a_currentTileId]))
 		{
 			currentTileId = -1;
-			for(int i = 0; i < pathToFollow.Count; i++)
+			for(int i = 0; i < _pathToFollow.Count; i++)
 			{
-				if(currentTile.Equals(pathToFollow[i]))
+				if(_currentTile.Equals(_pathToFollow[i]))
 					currentTileId = i;
 			}
 		}
@@ -151,13 +154,13 @@ internal class Unit : MonoBehaviour
 	{
 		ATile nextTile = null;
 		
-		if(a_currentTileId > -1 && pathToFollow != null)
+		if(a_currentTileId > -1 && _pathToFollow != null)
 		{
-			int destinationTileId = currentTileId;
-			if(currentTileId < pathToFollow.Count-1)
+			int destinationTileId = _currentTileId;
+			if(_currentTileId < _pathToFollow.Count-1)
 				destinationTileId++;
 
-			nextTile =  pathToFollow[destinationTileId];
+			nextTile =  _pathToFollow[destinationTileId];
 		}
 
 		return nextTile;
@@ -211,6 +214,16 @@ internal class Unit : MonoBehaviour
 		if(a_destinationReach.Equals(PathData.destinationTile))
 		{
 			Destroy(this.gameObject);
+		}
+	}
+
+	internal void OnHit(float a_damage)
+	{
+		_currentLifePoint -= a_damage;
+
+		if(_currentLifePoint <= 0f)
+		{
+			Destroy(gameObject);
 		}
 	}
 }

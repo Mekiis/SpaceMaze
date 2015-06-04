@@ -24,26 +24,8 @@ internal class UnitManager : MonoBehaviour
 	#endregion
 
 	#region Private Properties
-	private List<Unit> units = new List<Unit>();
-
-	private bool instantiateUnit = false;
+	private List<Unit> _units = new List<Unit>();
 	#endregion
-
-	// Use this for initialization
-	void Start ()
-	{
-	
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		if(instantiateUnit)
-		{
-			// Todo : Manage Unit
-			instantiateUnit = false;
-		}
-	}
 
 	public void InstantiateUnit(string a_unitId, int a_number, Path a_path)
 	{
@@ -58,9 +40,8 @@ internal class UnitManager : MonoBehaviour
 					unitInstantiate.transform.position = a_path.spawnTiles.transform.position + a_path.spawnTiles.transform.up * unit.height;
 					unitInstantiate.PathData = a_path;
 					unitInstantiate.Interuptor(true);
-					units.Add(unitInstantiate);
+					_units.Add(unitInstantiate);
 				}
-				if(a_number > 0) instantiateUnit = true;
 				return;
 			}
 		}
