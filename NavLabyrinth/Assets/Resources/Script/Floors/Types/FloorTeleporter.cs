@@ -6,7 +6,7 @@ internal class FloorTeleporter : Floor
 {
 	public Link destination = new Link();
 
-	protected override bool IsBuildable
+	protected override bool _IsBuildable
 	{
 		get
 		{

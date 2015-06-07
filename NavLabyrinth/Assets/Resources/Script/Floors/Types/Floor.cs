@@ -4,16 +4,18 @@ using System.Collections.Generic;
 
 internal class Floor : ATile 
 {
+	public bool isBuildable 			= true;
 	public List<Link> connection 		= new List<Link>();
+
 
 	internal Tower tower = null;
 	internal GameObject towerObject = null;
 	
-	protected virtual bool IsBuildable
+	protected virtual bool _IsBuildable
 	{
 		get
 		{
-			return (!this.isBlocked);
+			return (this.isWalkable && this.isBuildable);
 		}
 	}
 
@@ -77,7 +79,7 @@ internal class Floor : ATile
 		}
 
 		Gizmos.color = Color.red;
-		if(isBlocked)
+		if(!isWalkable)
 			Gizmos.DrawWireSphere(this.transform.position, 0.3f);
 	}
 
@@ -88,7 +90,7 @@ internal class Floor : ATile
 		foreach (Floor f in allObjects) {
 			if(!f.Equals(this) && f.gameObject.transform.up == this.gameObject.transform.up)
 			{
-				if(Vector3.Distance(f.gameObject.transform.position, this.transform.position) <= range)
+				if(Vector3.Distance(f.gameObject.transform.position, this.transform.position) <= range && !(f is FloorTeleporter))
 				{
 					Link l = new Link();
 					l.Tile = f;
@@ -100,7 +102,7 @@ internal class Floor : ATile
 
 	public virtual void OnSelected()
 	{
-		if(IsBuildable)
+		if(_IsBuildable)
 			GetComponent<Renderer>().material = MatSelected;
 		else
 			GetComponent<Renderer>().material = MatBlocked;
@@ -113,7 +115,7 @@ internal class Floor : ATile
 
 	public virtual void OnClick()
 	{
-		if(IsBuildable)
+		if(_IsBuildable)
 		{
 			List<Tower> towersAvaible = _gm.towerManager.GetEvolutionOfTower(tower);
 			Debug.Log("Tower avaible for this tile : "+towersAvaible.Count);

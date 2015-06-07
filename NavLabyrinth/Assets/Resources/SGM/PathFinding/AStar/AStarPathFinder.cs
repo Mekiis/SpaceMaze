@@ -56,7 +56,7 @@ internal class AStarPathFinder : IPathFinder {
 			{
 				Link link = connections[i];
 				AStarWrapperTile wrappedTileNeighboor = GetWrapperFromTile(allWrappedTiles, link.Tile);
-				if(wrappedTileNeighboor != null && !wrappedTileNeighboor.tile.isBlocked && !close.Contains(wrappedTileNeighboor))
+				if(wrappedTileNeighboor != null && wrappedTileNeighboor.tile.isWalkable && !close.Contains(wrappedTileNeighboor))
 				{
 					float gScore = currentNode.g + currentNode.getCostTo(wrappedTileNeighboor);
 					

@@ -14,7 +14,7 @@ internal abstract class ATile : MonoBehaviour
 {
 	#region Inspector Properties
 	public float weight 				= 1f;
-	public bool isBlocked 				= false;
+	public bool isWalkable 				= true;
 	#endregion
 
 	public abstract List<Link> GetConnections();

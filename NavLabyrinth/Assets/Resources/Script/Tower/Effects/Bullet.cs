@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-internal class Missile : MonoBehaviour {
+internal class Bullet : MonoBehaviour {
 	[Tooltip("Unity unit")]
 	public float range = 10f;
 	[Tooltip("Meter / Second")]
@@ -46,12 +46,17 @@ internal class Missile : MonoBehaviour {
 		{
 			other.GetComponent<Unit>().OnHit(dammage);
 			Explode();
+		} 
+		else if(other.GetComponent<Floor>() != null)
+		{
+			Explode();
 		}
 	}
 
 	protected virtual void Explode()
 	{
 		// TODO : Add explosion particules
+		Destroy(gameObject);
 	}
 
 	protected virtual void OnDrawGizmos() {

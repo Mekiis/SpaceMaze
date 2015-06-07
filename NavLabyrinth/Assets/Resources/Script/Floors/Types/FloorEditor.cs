@@ -21,7 +21,7 @@ public class FloorEditor : Editor
 	{
 		foreach(Floor f in targets)
 		{
-			f.BuildNeighboor(2.5f);
+			f.BuildNeighboor(2.1f);
 		}
 	}
 }

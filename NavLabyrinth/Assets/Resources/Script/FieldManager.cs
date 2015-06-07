@@ -6,8 +6,8 @@ using System.Collections.Generic;
 [Serializable]
 internal class Path 
 {
-	public ATile spawnTiles = null;
-	public FloorEnd destinationTile = null;
+	public FloorPath spawnTiles = null;
+	public FloorPath destinationTile = null;
 }
 
 internal class FieldManager : MonoBehaviour

@@ -13,7 +13,8 @@ internal class Tower : MonoBehaviour {
 	[Tooltip("Dammage deal")]
 	public float dammage = 1f;
 	public List<Tower> parents = new List<Tower>();
-	public Missile missile = null;
+	public Bullet bullet = null;
+	public Transform launchPoint = null;
 	#endregion
 
 	internal List<Unit> targets = new List<Unit>();
@@ -66,14 +67,29 @@ internal class Tower : MonoBehaviour {
 
 	private void LaunchShot()
 	{
-		// TODO : Find best accecible target
+		int layerMask = 1 << 8;
+
+		float minDistance = Mathf.Infinity;
+		targets.RemoveAll(p=>p == null);
+		foreach(Unit unit in targets)
+		{
+			Ray ray = new Ray (launchPoint.position, (unit.transform.position - launchPoint.position).normalized);
+			RaycastHit hit;
+			
+			if(!Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && Vector3.Distance(launchPoint.position, unit.transform.position) < minDistance) {
+				minDistance = Vector3.Distance(launchPoint.position, unit.transform.position);
+				_target = unit;
+			}
+		}
+
 
 		if(_target != null)
 		{
-			Missile missileInstantiate = Instantiate(missile, Vector3.zero, Quaternion.identity) as Missile;
+			Bullet missileInstantiate = Instantiate(bullet, Vector3.zero, Quaternion.identity) as Bullet;
 			missileInstantiate.gameObject.SetActive(true);
 			// TODO : Instantiate bullet on target !
-			missileInstantiate.StartMissile(transform.position, new Vector3(0, 0, 0));
+			missileInstantiate.transform.rotation = launchPoint.rotation;
+			missileInstantiate.StartMissile(launchPoint.position, _target.transform.position);
 
 			_timeBeforeNextShot = 1f/speed;
 		}

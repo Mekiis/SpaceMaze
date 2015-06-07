@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-internal class FloorEnd : Floor 
+internal class FloorPath : Floor 
 {	
-	protected override bool IsBuildable
+	protected override bool _IsBuildable
 	{
 		get
 		{
