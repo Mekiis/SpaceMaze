@@ -5,7 +5,7 @@ public class Cursor : MonoBehaviour {
 	[Range(0.0001f, 2f)]
 	public float movementDetectionThreshold = 0.1f;
 
-	private Floor _tileSelected = null;
+	private AFloor _tileSelected = null;
 	private Vector2 _mouseMovement = new Vector2(0f, 0f);
 
 	// Use this for initialization

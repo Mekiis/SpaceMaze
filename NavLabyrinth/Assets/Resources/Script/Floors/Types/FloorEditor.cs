@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
-[CustomEditor( typeof( Floor ), true )]
+[CustomEditor( typeof( AFloor ), true )]
 [CanEditMultipleObjects]
 public class FloorEditor : Editor
 {
